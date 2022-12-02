@@ -1,0 +1,64 @@
+Step 4
+-	Skip
+
+Step 5
+Change the python in the following to python3:
+-	RUN apt-get -y update && apt-get -y upgrade && apt-get -y install software-properties-common certbot python-certbot-nginx
+
+So: RUN apt-get -y update && apt-get -y upgrade && apt-get -y install software-properties-common certbot python3-certbot-nginx
+
+
+
+Docker commands
+
+
+docker network create wmap_network
+
+docker build -t wmap_nginx_certbot .
+
+docker create --name wmap_nginx_certbot --network wmap_network --network-alias wmap-nginx-certbot -p 80:80 -p 443:443 -t -v wmap_web_data:/usr/share/nginx/html -v $HOME/wmap_nginx_certbot/conf:/etc/nginx/conf.d -v /etc/letsencrypt:/etc/letsencrypt -v /var/www/certbot wmap_nginx_certbot
+
+docker start wmap_nginx_certbot
+docker exec -it wmap_nginx_certbot /bin/bash
+		within it run: certbot certonly –-nginx
+
+
+docker create --name wmap_pgadmin4 --network wmap_network --network-alias wmap-pgadmin4 -t -v wmap_pgadmin_data:/var/lib/pgadmin -e 'PGADMIN_DEFAULT_EMAIL=mark.foley@tudublin.ie' -e 'PGADMIN_DEFAULT_PASSWORD=mypassword' dpage/pgadmin4
+
+docker create --name wmap_postgis --network wmap_network --network-alias wmap-postgis -t -v wmap_postgis_data:/var/lib/postgresql -e 'POSTGRES_USER=docker' -e 'POSTGRES_PASS=docker' kartoza/postgis
+
+
+Push local docker image to dockerhub:
+Create the image again (NOTE – Make sure to run conda env export --from-history > ENV.yml first (make sure any packages referenced in settings.py are in it and use pip to install python.app (see how I did it previously in the ca1 project on laptop and GitHub)):
+docker buildx build --platform=linux/amd64 -t awm-ca2 .
+docker login --username rosstudublin
+docker tag awm-ca2 rosstudublin/awm-ca2
+docker push rosstudublin/awm-ca2  
+
+Pull image from dockerhub to VM:
+docker login --username rosstudublin
+docker pull rosstudublin/awm-ca2
+
+
+
+
+docker create --name awm-ca2-app --network wmap_network --network-alias wmap-network-alias -t rosstudublin/awm-ca2
+NOTE: Here, this came up when I ran it: WARNING: The requested image's platform (linux/arm64) does not match the detected host platform (linux/amd64) and no specific platform was requested
+
+Add header.conf and servers.conf files:
+Ssh into wmap_nginx_certbot container:
+docker exec -it wmap_nginx_certbot /bin/bash
+Then, cd into ‘etc’ folder
+Then, use vim to create the files and copy and paste the code from the files on my laptop/provided on BrightSpace
+
+
+Start containers:
+docker start wmap_postgis
+docker start wmap_pgadmin4
+docker start awm-ca2-app
+docker start wmap_nginx_certbot
+
+
+
+
+

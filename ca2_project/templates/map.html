@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Markers Map</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="{% static 'map.css' %}" />
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https:///unpkg.com/leaflet/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https:///unpkg.com/leaflet/dist/leaflet.js"></script>
+  </head>
+  <body>
+    <div class="container" style="height: 100%;">
+      <div class="row" style="height: 100%;">
+        <div class="col-sm" style="height: 100%; min-width: 65%;">
+          <div id="map"></div>
+          <script src="{% static 'map.js' %}"></script>
+        </div>
+        <div class="col-sm" style="height: 100%;">
+          <div class="mapForm">
+            <form method = "post">
+              {% csrf_token %}
+              {{ form.as_p }}
+              {{ world_instance }}
+              {% if world_instance %}
+              <button type = "submit">Add to DB</button>
+              {% else %}
+              <!-- <input id="currentLatInput"></input>
+              <input id="currentLngInput"></input>
+              <button type = "submit">Add Current Location to Database</button> -->
+              <a href="/map/add" class="button">Add Marker to Database</a>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+{% endblock %}

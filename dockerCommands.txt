@@ -1,0 +1,14 @@
+(for non-m1 laptops): docker build -t awm-ca2 .
+(for m1 laptops): docker buildx build --platform=linux/amd64 -t awm-ca2 .
+
+docker network create awm_ca2_network
+
+
+docker create --name awm_ca2_db_container --network awm_ca2_network --network-alias awm_ca2_db_network_internal -t -p 25432:5432 -e POSTGRES_USER=docker -e POSTGRES_PASS=docker -v awm_ca2_pgadmin_data_volume:/var/lib/postgresql kartoza/postgis
+
+
+docker create --name awm_ca2_pgadmin_container --network awm_ca2_network --network-alias awm_ca2_pgadmin_network_internal -p 20080:80 -t -e PGADMIN_DEFAULT_EMAIL=C19430472@mytudublin.ie -e PGADMIN_DEFAULT_PASSWORD=mytudubier -v awm_ca2_pgadmin_data_volume:/var/lib/pgadmin dpage/pgadmin4
+
+
+docker create --name awm_ca2_app_container --network awm_ca2_network --network-alias awm_ca2_app_network_internal -t -p 8002:8002 awm-ca2
+
