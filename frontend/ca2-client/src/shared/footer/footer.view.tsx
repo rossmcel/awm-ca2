@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, Text, Image } from "@chakra-ui/react";
-import reactlogo from "../../../logo192.png";
 
 interface FooterViewProps {
   topText: string;
@@ -25,9 +24,6 @@ export const FooterView: React.FC<FooterViewProps> = ({
       pt="2rem"
       pb="2rem"
     >
-      <Box boxSize="32px" ml="auto" mr="auto" mb="0.5rem">
-        <Image src={reactlogo} />
-      </Box>
       <Text as="h3" textAlign="center" color="white">
         {topText}
       </Text>
