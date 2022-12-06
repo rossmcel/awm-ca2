@@ -11,14 +11,14 @@ import { AuthProvider } from "./context/authContext";
 import PrivateRoute from "./utils/PrivateRoute";
 import ProtectedPage from "./utils/protectedPage";
 import Register from "./app/register";
-import Navbar from "./app/navbar";
+import NavbarLocal from "./app/navbar";
 
 const App = () => {
   return (
     <BrowserRouter>
       <div>
         <AuthProvider>
-          <Navbar />
+          <NavbarLocal />
           <Routes>
             <Route
                         path="/protected"
