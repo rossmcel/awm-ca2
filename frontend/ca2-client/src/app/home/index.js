@@ -18,6 +18,13 @@ export const Home = () => {
   const [markers, setMarkers] = useState(null);
   const [markersRendered, setMarkersRendered] = useState(false);
 
+  delete L.Icon.Default.prototype._getIconUrl;
+  L.Icon.Default.mergeOptions({
+    iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+    iconUrl: require('leaflet/dist/images/marker-icon.png'),
+    shadowUrl: require('leaflet/dist/images/marker-shadow.png')
+  });
+
   useEffect(() => {
     console.log("Test");
       const markers_url = `http://127.0.0.1:8000/api/WorldBorder/?in_bbox=${mapBounds}`;
@@ -28,64 +35,9 @@ export const Home = () => {
           const geojson = res.data;
           setLocations(geojson);
           console.log("Geojson is " + geojson);
+          console.log(geojson);
         });
   }, [mapBounds]);
-
-  // useEffect(() => {
-  //   console.log("Test");
-  //     const markers_url = `http://127.0.0.1:8000/api/WorldBorder/?in_bbox=${mapBounds}`;
-  //     // const response = axios.get(markers_url);
-  //     axios.get(markers_url)
-  //       .then(res => {
-  //         console.log(res);
-  //         const geojson = res.data;
-  //         setLocations(geojson);
-  //         console.log("Geojson is " + geojson);
-  //       });
-  //   // function LocationMarker() {
-  //   //   const [position, setPosition] = useState(null)
-  //   //   const map = useMapEvents({
-  //   //     click() {
-  //   //       map.locate()
-  //   //     },
-  //   //     locationfound(e) {
-  //   //       setPosition(e.latlng)
-  //   //       map.flyTo(e.latlng, map.getZoom())
-  //   //     },
-  //   //   })
-    
-  //   //   return position === null ? null : (
-  //   //     <Marker position={position}>
-  //   //       <Popup>You are here</Popup>
-  //   //     </Marker>
-  //   //   )
-  //   // }
-
-  //   // console.log(map);
-    
-  //   // const map = mapRef.leafletElement.getBounds;
-
-
-  //   // axios.get()
-  //   // const { current = {} } = mapRef;
-  //   // if(current) {
-  //   //   const { leafletElement: map } = current;
-  //   //   if ( !map ) return;
-
-  //   //   const parksGeoJson = new L.GeoJSON(nationalParks, {
-  //   //     onEachFeature: (feature = {}, layer) => {
-  //   //       const { properties = {} } = feature;
-  //   //       const { Name } = properties;
-  
-  //   //       if ( !Name ) return;
-  
-  //   //       layer.bindPopup(`<p>${Name}</p>`);
-  //   //     }
-  //   //   });
-  
-  //   //   parksGeoJson.addTo(map);
-  //   // }
-  // }, [])
 
   const MyComponent = () => {
     const mapName = useMap();
@@ -114,6 +66,10 @@ export const Home = () => {
     const render_markers = () => {
         // const markers = load_markers();
         const markers = locations;
+        console.log("markers are ")
+        console.log(markers);
+        console.log("park markers are")
+        console.log(nationalParks)
         L.geoJSON(markers)
             .bindPopup((layer) => layer.feature.properties.name)
             .addTo(map);
@@ -139,6 +95,44 @@ export const Home = () => {
     //     setMarkersRendered(true);
     //   }
     // }, [markersRendered])
+    // map.once()
+    // map.on('click', function (e) {
+    //   console.log("Map Clicked");
+      // marker
+      //     .setLatLng(e.latlng)
+      //     .addTo(map);
+      // console.log(marker);
+      // //document.getElementById("selectedLocationLat").innerHTML = marker._latlng.lat;
+      // //document.getElementById("selectedLocationLng").innerHTML = marker._latlng.lng;
+      // const markerNameElement = document.getElementById("id_name");
+      // const latElement = document.getElementById("id_lat");
+      // const lngElement = document.getElementById("id_lng");
+      // markerNameElement.value = "Selected Point";
+      // latElement.value = marker._latlng.lat;
+      // lngElement.value = marker._latlng.lng;
+      // });
+      const mapLocal = useMapEvents({
+        click(e) {
+          console.log("Click");
+          console.log(e.latlng.lat);
+          console.log(e.latlng.lng);
+          const ajaxData = {
+            lat: e.latlng.lat,
+            lng: e.latlng.lng,
+          }
+            const fetchData = async () => {
+              try {
+                const response = await api.post("/map/add/selected",{
+                  data: JSON.stringify({payload: ajaxData,}),
+                });
+                console.log(response);
+              } catch {
+                console.log("Something went wrong");
+              }
+            };
+            fetchData();
+        }
+      });
   }
 
   function LocationMarker() {

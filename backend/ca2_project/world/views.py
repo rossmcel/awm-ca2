@@ -57,6 +57,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
 from django.contrib.auth.models import User
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from . import serializers
 
 
 class Home(TemplateView):
@@ -183,3 +184,57 @@ def addMarkerEndPoint(request):
         return JsonResponse({'status': 'Data added!'})
 
         # return Response({}, status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def addMarkerEndPointSelected(request):
+    if request.method == 'GET':
+        data = f"Congratulation {request.user}, your API just responded to GET request"
+        return Response({'response': data}, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        # text = request.POST.get('text')
+        # data = f'Congratulation your API just responded to POST request with text: {text}'
+        # return Response({'response': data}, status=status.HTTP_200_OK)
+
+        world_instance = models.WorldBorder()
+        data = json.load(request)
+        dataData = data.get('data')
+        print(dataData, os.getcwd())
+        payload = json.loads(dataData)
+        print(payload.get('payload'), os.getcwd())
+        todo = payload.get('payload')
+        # print(todo, os.getcwd())
+        print(todo['lat'], os.getcwd())
+        world_instance.name = "Current Location"
+        pnt = Point(todo['lng'], todo['lat'])
+        world_instance.location = pnt
+        world_instance.adderuser = request.user
+        world_instance.nameandadderusercombined = str(
+            todo['lng']) + str(todo['lat']) + "Selected Location"
+        world_instance.save()
+        return JsonResponse({'status': 'Data added!'})
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def getMarkers(request):
+    if request.method == 'GET':
+        # bbox_filter_field = "location"
+        # filter_backends = (filters.InBBoxFilter,)
+        #queryset = models.WorldBorder.objects.all()
+        queryset = models.WorldBorder.objects.get_queryset()
+        serializer_class = serializers.WorldBorderSerializer
+
+        def get_queryset(self):
+            """
+            This view should return a list of all the purchases
+            for the currently authenticated user.
+            """
+            user = self.request.user
+            return models.WorldBorder.objects.filter(adderuser=user)
+
+    elif request.method == 'POST':
+        text = request.POST.get('text')
+        data = f'Congratulation your API just responded to POST request with text: {text}'
+        return Response({'response': data}, status=status.HTTP_200_OK)
