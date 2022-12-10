@@ -11,16 +11,11 @@ export const Home = () => {
   const [locations, setLocations] = useState(null);
   const [map, setMap] = useState(null);
   const [mapBounds, setMapBounds] = useState(null);
+  const [markers, setMarkers] = useState(null);
+  const [markersRendered, setMarkersRendered] = useState(false);
 
-  const MyComponent = () => {
-    const mapName = useMap();
-    setMap(mapName);
-    // console.log(mapName.getBounds().toBBoxString());
-    console.log(map.getBounds().toBBoxString());
-    setMapBounds(map.getBounds().toBBoxString());
-
-    const load_markers = () => {
-      console.log("Test");
+  useEffect(() => {
+    console.log("Test");
       const markers_url = `http://127.0.0.1:8000/api/WorldBorder/?in_bbox=${mapBounds}`;
       // const response = axios.get(markers_url);
       axios.get(markers_url)
@@ -30,63 +25,155 @@ export const Home = () => {
           setLocations(geojson);
           console.log("Geojson is " + geojson);
         });
-    }
+  }, [mapBounds]);
+
+  // useEffect(() => {
+  //   console.log("Test");
+  //     const markers_url = `http://127.0.0.1:8000/api/WorldBorder/?in_bbox=${mapBounds}`;
+  //     // const response = axios.get(markers_url);
+  //     axios.get(markers_url)
+  //       .then(res => {
+  //         console.log(res);
+  //         const geojson = res.data;
+  //         setLocations(geojson);
+  //         console.log("Geojson is " + geojson);
+  //       });
+  //   // function LocationMarker() {
+  //   //   const [position, setPosition] = useState(null)
+  //   //   const map = useMapEvents({
+  //   //     click() {
+  //   //       map.locate()
+  //   //     },
+  //   //     locationfound(e) {
+  //   //       setPosition(e.latlng)
+  //   //       map.flyTo(e.latlng, map.getZoom())
+  //   //     },
+  //   //   })
+    
+  //   //   return position === null ? null : (
+  //   //     <Marker position={position}>
+  //   //       <Popup>You are here</Popup>
+  //   //     </Marker>
+  //   //   )
+  //   // }
+
+  //   // console.log(map);
+    
+  //   // const map = mapRef.leafletElement.getBounds;
+
+
+  //   // axios.get()
+  //   // const { current = {} } = mapRef;
+  //   // if(current) {
+  //   //   const { leafletElement: map } = current;
+  //   //   if ( !map ) return;
+
+  //   //   const parksGeoJson = new L.GeoJSON(nationalParks, {
+  //   //     onEachFeature: (feature = {}, layer) => {
+  //   //       const { properties = {} } = feature;
+  //   //       const { Name } = properties;
+  
+  //   //       if ( !Name ) return;
+  
+  //   //       layer.bindPopup(`<p>${Name}</p>`);
+  //   //     }
+  //   //   });
+  
+  //   //   parksGeoJson.addTo(map);
+  //   // }
+  // }, [])
+
+  const MyComponent = () => {
+    const mapName = useMap();
+    // useEffect(() => {
+    //   setMap(mapName);
+    //   setMapBounds(mapName.getBounds().toBBoxString());
+    // }, []);
+    setMap(mapName);
+    // console.log(mapName.getBounds().toBBoxString());
+    console.log(map.getBounds().toBBoxString());
+    // setMapBounds(map.getBounds().toBBoxString());
+
+    // const load_markers = () => {
+    //   console.log("Test");
+    //   const markers_url = `http://127.0.0.1:8000/api/WorldBorder/?in_bbox=${mapBounds}`;
+    //   // const response = axios.get(markers_url);
+    //   axios.get(markers_url)
+    //     .then(res => {
+    //       console.log(res);
+    //       const geojson = res.data;
+    //       setLocations(geojson);
+    //       console.log("Geojson is " + geojson);
+    //     });
+    // }
 
     const render_markers = () => {
-        const markers = load_markers();
+        // const markers = load_markers();
+        const markers = locations;
         L.geoJSON(markers)
             .bindPopup((layer) => layer.feature.properties.name)
             .addTo(map);
     }
 
     map.on("moveend", render_markers);
+
+    // useEffect( () => () => {
+    //   setMarkersRendered(true);
+    // }, [] );
+
+    // useEffect( () => () => {
+    //   console.log("unmount");
+    //   if(!markersRendered) {
+    //     map.on("moveend", render_markers);
+    //   }
+    //   setMarkersRendered(true);
+    // }, [] );
+    // useEffect(() => {
+    //   console.log("unmount");
+    //   if(!markersRendered) {
+    //     map.on("moveend", render_markers);
+    //     setMarkersRendered(true);
+    //   }
+    // }, [markersRendered])
   }
 
-  useEffect(() => {
-    // function LocationMarker() {
-    //   const [position, setPosition] = useState(null)
-    //   const map = useMapEvents({
-    //     click() {
-    //       map.locate()
-    //     },
-    //     locationfound(e) {
-    //       setPosition(e.latlng)
-    //       map.flyTo(e.latlng, map.getZoom())
-    //     },
-    //   })
-    
-    //   return position === null ? null : (
-    //     <Marker position={position}>
-    //       <Popup>You are here</Popup>
-    //     </Marker>
-    //   )
-    // }
+  function LocationMarker() {
+    const [position, setPosition] = useState(null);
+    const mapName = useMap();
+    mapName.locate();
+        const map = useMapEvents({
+          // click() {
+          //   console.log("Here");
+          //   map.locate();
+          // },
+          // moveend() {
+          //     console.log("Here");
+          //     map.locate();
+          // },
+          locationfound(e) {
+            if(position == null) {
+              console.log("Current Location: " + e.latlng);
+              setPosition(e.latlng)
+              map.flyTo(e.latlng, map.getZoom())
+            }
+          },
+        });
 
-    // console.log(map);
-    
-    // const map = mapRef.leafletElement.getBounds;
+    // useEffect(() => {
+      
+    // }, [locationFound]);
 
-
-    // axios.get()
-    // const { current = {} } = mapRef;
-    // if(current) {
-    //   const { leafletElement: map } = current;
-    //   if ( !map ) return;
-
-    //   const parksGeoJson = new L.GeoJSON(nationalParks, {
-    //     onEachFeature: (feature = {}, layer) => {
-    //       const { properties = {} } = feature;
-    //       const { Name } = properties;
+    useEffect( () => () => {
+      setMap(mapName);
+      setMapBounds(mapName.getBounds().toBBoxString());
+    }, [] );
   
-    //       if ( !Name ) return;
-  
-    //       layer.bindPopup(`<p>${Name}</p>`);
-    //     }
-    //   });
-  
-    //   parksGeoJson.addTo(map);
-    // }
-  }, [])
+    return position === null ? null : (
+      <Marker position={position}>
+        <Popup>You are here</Popup>
+      </Marker>
+    )
+  }
 
   const copy =
     "© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors";
@@ -95,6 +182,7 @@ export const Home = () => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; <a href=&quot;https://www.openstreetmap.org/copyright&quot;>OpenStreetMap</a> contributors" />
         {/* <GeoJSON key={keyFunction(this.props.map.data.json)} data={this.props.map.data.json} /> */}
         <MyComponent/>
+        <LocationMarker />
       </MapContainer>
     );
 }
