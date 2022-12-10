@@ -5,8 +5,12 @@ import { MapContainer, TileLayer, GeoJSON, useMapEvents, Marker, Popup, useMap }
 import '../../App.css';
 import 'leaflet/dist/leaflet.css';
 import nationalParks from './national-parks.json';
+import $ from "jquery";
+import { useAxios } from "../../utils/useAxios";
+import Cookies from 'js-cookie';
 
 export const Home = () => {
+  const api = useAxios();
   const mapRef = useRef();
   const [locations, setLocations] = useState(null);
   const [map, setMap] = useState(null);
@@ -139,8 +143,30 @@ export const Home = () => {
 
   function LocationMarker() {
     const [position, setPosition] = useState(null);
+    const [positionNotEmpty, setPositionNotEmpty] = useState(false);
+    const [lat, setLat] = useState(null);
+    const [long, setLong] = useState(null);
+    const [hasPosted, setHasPosted] = useState(false);
     const mapName = useMap();
+    let storePosition = null;
     mapName.locate();
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          // Does this cookie string begin with the name we want?
+          if (cookie.substring(0, name.length + 1) === (name + "=")) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
         const map = useMapEvents({
           // click() {
           //   console.log("Here");
@@ -152,10 +178,38 @@ export const Home = () => {
           // },
           locationfound(e) {
             if(position == null) {
-              console.log("Current Location: " + e.latlng);
-              setPosition(e.latlng)
-              map.flyTo(e.latlng, map.getZoom())
-            }
+                console.log("Current Location: " + e.latlng);
+                setPosition(e.latlng);
+                setLat(e.latlng.lat);
+                setLong(e.latlng.lng);
+                storePosition = e.latlng;
+                console.log("e latlng is")
+                console.log(e.latlng);
+                map.flyTo(e.latlng, map.getZoom());
+
+                const ajaxData = {
+                  lat: e.latlng.lat,
+                  lng: e.latlng.lng,
+                }
+                  function getCookie(name) {
+                    let cookieValue = null;
+                    cookieValue = Cookies.get(name); 
+                    return cookieValue;
+                  }
+                  const fetchData = async () => {
+                    try {
+                      const response = await api.post("/map/add/",{
+                        data: JSON.stringify({payload: ajaxData,}),
+                      });
+                      console.log(response);
+                    } catch {
+                      console.log("Something went wrong");
+                    }
+                  };
+                  if(!hasPosted) {
+                    fetchData();
+                  }
+              }
           },
         });
 
@@ -166,6 +220,11 @@ export const Home = () => {
     useEffect( () => () => {
       setMap(mapName);
       setMapBounds(mapName.getBounds().toBBoxString());
+      console.log("sp" + storePosition);
+      if(storePosition != null) {
+        setPosition(storePosition);
+        setHasPosted(true);
+      }
     }, [] );
   
     return position === null ? null : (

@@ -77,47 +77,47 @@ class AddMarkerWorldBorderMapView(TemplateView):
     template_name = "addmapmarker.html"
 
 
-@login_required
+# @login_required
 def add_marker_world_border_map_view(request):
     # world_instance = get_object_or_404(models.WorldBorder)
     world_instance = models.WorldBorder()
     form = forms.AddMarkerForm(request.POST)
 
-    # If this is a POST request then process the Form data
-    if request.method == 'POST':
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    # # If this is a POST request then process the Form data
+    # if request.method == 'POST':
+    #     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
-        if is_ajax:
-            # my_location = request.POST.get("point", None)
-            # if not my_location:
-            #     return JsonResponse({"message": "No location found."}, status=400)
-            data = json.load(request)
-            todo = data.get('payload')
-            print(todo['lat'], os.getcwd())
-            world_instance.name = "Current Location"
-            pnt = Point(todo['lng'], todo['lat'])
-            world_instance.location = pnt
-            world_instance.adderuser = request.user
-            world_instance.save()
-            return JsonResponse({'status': 'Data added!'})
+    #     if is_ajax:
+    #         # my_location = request.POST.get("point", None)
+    #         # if not my_location:
+    #         #     return JsonResponse({"message": "No location found."}, status=400)
+    data = json.load(request)
+    todo = data.get('payload')
+    print(todo['lat'], os.getcwd())
+    world_instance.name = "Current Location"
+    pnt = Point(todo['lng'], todo['lat'])
+    world_instance.location = pnt
+    world_instance.adderuser = request.user
+    world_instance.save()
+    return JsonResponse({'status': 'Data added!'})
 
-        # Check if the form is valid:
-        if form.is_valid():
-            # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
-            world_instance.name = form.cleaned_data['name']
-            pnt = Point(form.cleaned_data['lng'], form.cleaned_data['lat'])
-            world_instance.location = pnt
-            world_instance.adderuser = request.user
-            world_instance.save()
+    # # Check if the form is valid:
+    # if form.is_valid():
+    #     # process the data in form.cleaned_data as required (here we just write it to the model due_back field)
+    #     world_instance.name = form.cleaned_data['name']
+    #     pnt = Point(form.cleaned_data['lng'], form.cleaned_data['lat'])
+    #     world_instance.location = pnt
+    #     world_instance.adderuser = request.user
+    #     world_instance.save()
 
-            # redirect to a new URL:
-            return redirect('/map')
+    #     # redirect to a new URL:
+    #     return redirect('/map')
 
-    # If this is a GET (or any other method) create the default form.
-    else:
-        form = forms.AddMarkerForm()
+    # # If this is a GET (or any other method) create the default form.
+    # else:
+    #     form = forms.AddMarkerForm()
 
-    return render(request, 'map.html', {'form': form, "world_instance": world_instance, })
+    # return render(request, 'map.html', {'form': form, "world_instance": world_instance, })
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
@@ -151,3 +151,35 @@ def testEndPoint(request):
         data = f'Congratulation your API just responded to POST request with text: {text}'
         return Response({'response': data}, status=status.HTTP_200_OK)
     return Response({}, status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def addMarkerEndPoint(request):
+    if request.method == 'GET':
+        data = f"Congratulation {request.user}, your API just responded to GET request"
+        return Response({'response': data}, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        # text = request.POST.get('text')
+        # data = f'Congratulation your API just responded to POST request with text: {text}'
+        # return Response({'response': data}, status=status.HTTP_200_OK)
+
+        world_instance = models.WorldBorder()
+        data = json.load(request)
+        dataData = data.get('data')
+        print(dataData, os.getcwd())
+        payload = json.loads(dataData)
+        print(payload.get('payload'), os.getcwd())
+        todo = payload.get('payload')
+        # print(todo, os.getcwd())
+        print(todo['lat'], os.getcwd())
+        world_instance.name = "Current Location"
+        pnt = Point(todo['lng'], todo['lat'])
+        world_instance.location = pnt
+        world_instance.adderuser = request.user
+        world_instance.nameandadderusercombined = str(
+            todo['lng']) + str(todo['lat']) + "Current Location"
+        world_instance.save()
+        return JsonResponse({'status': 'Data added!'})
+
+        # return Response({}, status.HTTP_400_BAD_REQUEST)

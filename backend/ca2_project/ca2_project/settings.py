@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from decouple import config
+import dj_database_url
 
 import os
 os.environ['PROJ_LIB'] = f"{os.environ.get('CONDA_PREFIX','')}/share/proj"
@@ -211,3 +213,10 @@ LEAFLET_CONFIG = {
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.rossmcelhinneycollege.xyz', 'http://*.localhost:3000']
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_HTTPONLY = False
+SESSION_COOKIE_SECURE = False

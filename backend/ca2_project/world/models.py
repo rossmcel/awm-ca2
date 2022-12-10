@@ -5,6 +5,8 @@ class WorldBorder(models.Model):
     name = models.CharField(max_length=255)
     adderuser = models.CharField(max_length=255)
     location = models.PointField(null=True)
+    nameandadderusercombined = models.CharField(
+        max_length=510, unique=True, null=True)
 
     # Returns the string representation of the model.
     def __str__(self):

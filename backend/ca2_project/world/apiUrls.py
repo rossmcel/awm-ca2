@@ -11,5 +11,7 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('register/', views.RegisterView.as_view(), name='auth_register'),
     path('test/', views.testEndPoint, name='test'),
+    path('map/add/', views.addMarkerEndPoint,
+         name='add-marker-world-border-map-view'),
     # path('', views.getRoutes)
 ]
