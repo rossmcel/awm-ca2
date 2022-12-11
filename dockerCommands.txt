@@ -12,3 +12,13 @@ docker create --name awm_ca2_pgadmin_container --network awm_ca2_network --netwo
 
 docker create --name awm_ca2_app_container --network awm_ca2_network --network-alias awm_ca2_app_network_internal -t -p 8002:8002 awm-ca2
 
+
+
+
+(react app instructions)
+(In the directory with dockerfile on frontend)
+
+docker buildx build --platform=linux/amd64 -t awm-ca2-react-docker .
+docker run -p 3000:3000 -d awm-ca2-react-docker
+docker create --name awm_ca2_react_container -t -p 3000:3000 awm-ca2-react-docker
+

@@ -21,6 +21,7 @@ export const Home = () => {
   const [mapBounds, setMapBounds] = useState(null);
   const [markers, setMarkers] = useState(null);
   const [markersRendered, setMarkersRendered] = useState(false);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   delete L.Icon.Default.prototype._getIconUrl;
   L.Icon.Default.mergeOptions({
@@ -31,7 +32,7 @@ export const Home = () => {
 
   useEffect(() => {
     console.log("Test");
-      const markers_url = `http://127.0.0.1:8000/api/WorldBorder/?in_bbox=${mapBounds}`;
+      const markers_url = `http://127.0.0.1:8000/api/WorldBorder/`;
       // const response = axios.get(markers_url);
       axios.get(markers_url)
         .then(res => {
@@ -40,8 +41,9 @@ export const Home = () => {
           setLocations(geojson);
           console.log("Geojson is " + geojson);
           console.log(geojson);
+          setDataLoaded(true);
         });
-  }, [mapBounds]);
+  }, [dataLoaded]);
 
   const MyComponent = () => {
     const mapName = useMap();
@@ -51,7 +53,7 @@ export const Home = () => {
     // }, []);
     setMap(mapName);
     // console.log(mapName.getBounds().toBBoxString());
-    console.log(map.getBounds().toBBoxString());
+    //console.log(map.getBounds().toBBoxString());
     // setMapBounds(map.getBounds().toBBoxString());
 
     // const load_markers = () => {
@@ -72,14 +74,12 @@ export const Home = () => {
         const markers = locations;
         console.log("markers are ")
         console.log(markers);
-        console.log("park markers are")
-        console.log(nationalParks)
         L.geoJSON(markers)
-            .bindPopup((layer) => layer.feature.properties.name)
+            .bindPopup((layer) => "<b>Hello world!</b><br>I am a popup.<form><input></input></form>" + layer.feature.properties.name)
             .addTo(map);
     }
 
-    map.once("moveend", render_markers);
+    //map.once("moveend", render_markers);
 
     // useEffect( () => () => {
     //   setMarkersRendered(true);
@@ -236,17 +236,37 @@ export const Home = () => {
     "© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors";
     return (
       <>
+      {dataLoaded == true ?
+      <>
         <Flex direction="wrap" ml="2%" mr="2%" mt="3%" minW="96%">
           <MapContainer ref={mapRef} center={[39.50, -98.35]} zoom={4} whenReady={setMap}>
             <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; <a href=&quot;https://www.openstreetmap.org/copyright&quot;>OpenStreetMap</a> contributors" />
             {/* <GeoJSON key={keyFunction(this.props.map.data.json)} data={this.props.map.data.json} /> */}
             <MyComponent/>
             <LocationMarker />
+            {locations != null ?
+                <GeoJSON
+                  attribution="Markers"
+                  data={locations}
+                />
+            :
+            <></>
+          }
           </MapContainer>
-          <Flex minW="25vw" ml="1%" minH="100%" border="1px solid lightgrey" borderRadius="0.4rem"></Flex>
+          <Flex minW="25vw" ml="1%" minH="100%" border="1px solid lightgrey" borderRadius="0.4rem">
+            {locations == null ? 
+            <Box></Box> 
+            : 
+            <Box></Box>
+            }
+          </Flex>
         </Flex>
         <a href='/login'>Login</a>
         <a href='/login'>Register</a>
+      </>
+      :
+      <Box>Loading.......</Box>
+      }
       </>
     );
 }

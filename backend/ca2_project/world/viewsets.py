@@ -11,11 +11,11 @@ import os
 class WorldBorderViewSet(viewsets.ReadOnlyModelViewSet):
     """Marker view set."""
 
-    bbox_filter_field = "location"
-    print(bbox_filter_field, os.getcwd())
-    filter_backends = (filters.InBBoxFilter,)
-    #queryset = models.WorldBorder.objects.all()
-    queryset = models.WorldBorder.objects.get_queryset()
+    # bbox_filter_field = "location"
+    # print(bbox_filter_field, os.getcwd())
+    # filter_backends = (filters.InBBoxFilter,)
+    queryset = models.WorldBorder.objects.all()
+    # queryset = models.WorldBorder.objects.get_queryset()
     serializer_class = serializers.WorldBorderSerializer
 
     def get_queryset(self):
