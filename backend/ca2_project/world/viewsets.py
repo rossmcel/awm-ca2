@@ -18,17 +18,17 @@ class WorldBorderViewSet(viewsets.ReadOnlyModelViewSet):
     # queryset = models.WorldBorder.objects.get_queryset()
     serializer_class = serializers.WorldBorderSerializer
 
-    def get_queryset(self):
-        """
-        This view should return a list of all the purchases
-        for the currently authenticated user.
-        """
-        # user = self.request.user
-        user = "bob2"
-        print(user, os.getcwd())
-        print("Username attached Is: ", os.getcwd())
-        print(self.request.user, os.getcwd())
-        return models.WorldBorder.objects.filter(adderuser=user)
+    # def get_queryset(self):
+    #     """
+    #     This view should return a list of all the purchases
+    #     for the currently authenticated user.
+    #     """
+    #     # user = self.request.user
+    #     user = "bob2"
+    #     print(user, os.getcwd())
+    #     print("Username attached Is: ", os.getcwd())
+    #     print(self.request.user, os.getcwd())
+    #     return models.WorldBorder.objects.filter(adderuser=user)
 
 
 # class WorldBorderViewSet(generics.ListAPIView):
