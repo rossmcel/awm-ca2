@@ -26,6 +26,8 @@ class WorldBorderViewSet(viewsets.ReadOnlyModelViewSet):
         # user = self.request.user
         user = "bob2"
         print(user, os.getcwd())
+        print("Username attached Is: ", os.getcwd())
+        print(self.request.user, os.getcwd())
         return models.WorldBorder.objects.filter(adderuser=user)
 
 

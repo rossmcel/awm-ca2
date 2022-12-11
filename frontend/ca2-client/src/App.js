@@ -21,19 +21,17 @@ const App = () => {
         <AuthProvider>
           <NavbarLocal />
           <Routes>
-            <Route
+            {/* <Route
                         path="/protected"
                         element={
                             <PrivateRoute>
                                 <Home />
                             </PrivateRoute>
                         }
-                    />
+                    /> */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/notauthenticated" element={<NotAuthenticated />} />
-            <Route path="*" element={<PageNotFound />} />
           </Routes>
         </AuthProvider>
       </div>

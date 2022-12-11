@@ -13,14 +13,14 @@ const NavbarLocal = () => {
     <>
     <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand href="/">Ross AWM CA2</Navbar.Brand>
+        <Link to="/"><Navbar.Brand>Ross AWM CA2</Navbar.Brand></Link>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
             {user ? (
               <>
-                <Nav.Link href="/">Home</Nav.Link>
-                <Nav.Link href="/protected">Protected Page</Nav.Link>
+                <Nav><Link to="/" color="initial">Home</Link></Nav>
+                <Nav><Link to="/protected">Protected Page</Link></Nav>
               </>
             ) : (
               <>
@@ -45,8 +45,8 @@ const NavbarLocal = () => {
               </>
             ) : (
               <>
-                <Nav.Link href="/login">Login</Nav.Link>
-                <Nav.Link href="/register">Register</Nav.Link>
+                <Link to="/login" color="initial"><Nav>Login</Nav></Link>
+                <Link to="/register" color="initial"><Nav>Register</Nav></Link>
               </>
             )}
           </Nav>

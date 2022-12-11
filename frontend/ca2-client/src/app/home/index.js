@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import axios from "axios";
+import {
+  Box,
+  Flex,
+} from "@chakra-ui/react";
 import L from 'leaflet';
 import { MapContainer, TileLayer, GeoJSON, useMapEvents, Marker, Popup, useMap } from 'react-leaflet';
 import '../../App.css';
@@ -75,7 +79,7 @@ export const Home = () => {
             .addTo(map);
     }
 
-    map.on("moveend", render_markers);
+    map.once("moveend", render_markers);
 
     // useEffect( () => () => {
     //   setMarkersRendered(true);
@@ -231,12 +235,19 @@ export const Home = () => {
   const copy =
     "© <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors";
     return (
-      <MapContainer ref={mapRef} center={[39.50, -98.35]} zoom={4} whenReady={setMap}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; <a href=&quot;https://www.openstreetmap.org/copyright&quot;>OpenStreetMap</a> contributors" />
-        {/* <GeoJSON key={keyFunction(this.props.map.data.json)} data={this.props.map.data.json} /> */}
-        <MyComponent/>
-        <LocationMarker />
-      </MapContainer>
+      <>
+        <Flex direction="wrap" ml="2%" mr="2%" mt="3%" minW="96%">
+          <MapContainer ref={mapRef} center={[39.50, -98.35]} zoom={4} whenReady={setMap}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; <a href=&quot;https://www.openstreetmap.org/copyright&quot;>OpenStreetMap</a> contributors" />
+            {/* <GeoJSON key={keyFunction(this.props.map.data.json)} data={this.props.map.data.json} /> */}
+            <MyComponent/>
+            <LocationMarker />
+          </MapContainer>
+          <Flex minW="25vw" ml="1%" minH="100%" border="1px solid lightgrey" borderRadius="0.4rem"></Flex>
+        </Flex>
+        <a href='/login'>Login</a>
+        <a href='/login'>Register</a>
+      </>
     );
 }
 

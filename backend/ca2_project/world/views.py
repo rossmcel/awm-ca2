@@ -216,25 +216,25 @@ def addMarkerEndPointSelected(request):
         return JsonResponse({'status': 'Data added!'})
 
 
-@api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-def getMarkers(request):
-    if request.method == 'GET':
-        # bbox_filter_field = "location"
-        # filter_backends = (filters.InBBoxFilter,)
-        #queryset = models.WorldBorder.objects.all()
-        queryset = models.WorldBorder.objects.get_queryset()
-        serializer_class = serializers.WorldBorderSerializer
+# @api_view(['GET', 'POST'])
+# @permission_classes([IsAuthenticated])
+# def getMarkers(request):
+#     if request.method == 'GET':
+#         # bbox_filter_field = "location"
+#         # filter_backends = (filters.InBBoxFilter,)
+#         #queryset = models.WorldBorder.objects.all()
+#         queryset = models.WorldBorder.objects.get_queryset()
+#         serializer_class = serializers.WorldBorderSerializer
 
-        def get_queryset(self):
-            """
-            This view should return a list of all the purchases
-            for the currently authenticated user.
-            """
-            user = self.request.user
-            return models.WorldBorder.objects.filter(adderuser=user)
+#         def get_queryset(self):
+#             """
+#             This view should return a list of all the purchases
+#             for the currently authenticated user.
+#             """
+#             user = self.request.user
+#             return models.WorldBorder.objects.filter(adderuser=user)
 
-    elif request.method == 'POST':
-        text = request.POST.get('text')
-        data = f'Congratulation your API just responded to POST request with text: {text}'
-        return Response({'response': data}, status=status.HTTP_200_OK)
+#     elif request.method == 'POST':
+#         text = request.POST.get('text')
+#         data = f'Congratulation your API just responded to POST request with text: {text}'
+#         return Response({'response': data}, status=status.HTTP_200_OK)
