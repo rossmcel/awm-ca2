@@ -17,5 +17,7 @@ urlpatterns = [
          name='add-marker-world-border-map-view'),
     path('map/add/selected', views.addMarkerEndPointSelected,
          name='add-marker-world-border-map-view-selected'),
+    path('map/add/overpass', views.QueryOverpass,
+         name='add-marker-overpass'),
     path('', include("world.api"))
 ]
